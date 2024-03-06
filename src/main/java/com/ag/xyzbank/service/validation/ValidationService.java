@@ -1,10 +1,10 @@
 package com.ag.xyzbank.service.validation;
 
-import com.ag.xyzbank.controller.dto.AuthCredentialsDto;
 import com.ag.xyzbank.controller.dto.UserDto;
 import com.ag.xyzbank.model.ValidationResponse;
 import org.springframework.stereotype.Service;
 
+//TODO service interfaces can be used
 @Service
 public class ValidationService {
 	private final UsernameValidator usernameValidator;
