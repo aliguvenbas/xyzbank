@@ -1,6 +1,5 @@
 package com.ag.xyzbank.service;
 
-import com.ag.xyzbank.controller.dto.AuthCredentialsDto;
 import com.ag.xyzbank.repository.TokenRepository;
 import com.ag.xyzbank.repository.data.Token;
 import java.util.UUID;
@@ -18,11 +17,11 @@ public class TokenService {
 	public boolean activateToken(String token) {
 		Token savedToken = tokenRepository.findByToken(token);
 
-		if(savedToken == null){
+		if(savedToken == null) {
 			//TODO warning
 		}
 
-		if(savedToken.isActive()){
+		if(savedToken.isActive()) {
 			// TODO info
 		}
 
@@ -40,6 +39,11 @@ public class TokenService {
 
 	public String checkTokenStatus(String token) {
 		Token savedToken = tokenRepository.findByToken(token);
-		return savedToken.getUsername();
+
+		if(savedToken.isActive()){
+			return savedToken.getUsername();
+		}else {
+			return null;
+		}
 	}
 }

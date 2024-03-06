@@ -6,6 +6,7 @@ import com.ag.xyzbank.repository.AccountRepository;
 import com.ag.xyzbank.repository.UserRepository;
 import com.ag.xyzbank.repository.data.Account;
 import com.ag.xyzbank.repository.data.AccountType;
+import com.ag.xyzbank.repository.data.Currency;
 import com.ag.xyzbank.repository.data.User;
 import com.ag.xyzbank.util.IbanUtil;
 import com.ag.xyzbank.util.PasswordUtil;
@@ -23,6 +24,7 @@ public class UserService {
 		this.accountRepository = accountRepository;
 	}
 
+	// TODO transactional
 	public AuthCredentialsDto registerUser(UserDto userDto) {
 		var user = new User(userDto.getUsername(),
 				userDto.getAddress(),
@@ -43,6 +45,6 @@ public class UserService {
 
 		String iban = IbanUtil.generateNetherlandsIBAN();
 
-		accountRepository.save(new Account(username, iban, 0, AccountType.TYPE1));
+		accountRepository.save(new Account(username, iban, 0, AccountType.TYPE1, Currency.EUR));
 	}
 }

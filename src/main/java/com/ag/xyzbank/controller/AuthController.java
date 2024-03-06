@@ -46,12 +46,20 @@ public class AuthController {
 
 	@PostMapping("token")
 	public String getToken(@RequestBody AuthCredentialsDto authCredentialsDto) {
-		return tokenService.createToken(authCredentialsDto.getUsername());
+
+		ValidationResponse validation = validationService.validateUserForAuth(
+				authCredentialsDto.getUsername(),
+				authCredentialsDto.getPassword());
+		if(validation.isValid()) {
+			return tokenService.createToken(authCredentialsDto.getUsername());
+		} else {
+			//TODO put more details
+			throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, validation.getMessage());
+		}
 	}
 
 	@GetMapping("logon")
 	public String validateToken(@RequestParam String token) {
-		// TODO do it in security layer
 		var b = tokenService.activateToken(token);
 		if(b) {
 			return "Successfully login";

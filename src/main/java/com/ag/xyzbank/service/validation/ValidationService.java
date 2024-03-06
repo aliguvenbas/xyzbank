@@ -7,18 +7,16 @@ import org.springframework.stereotype.Service;
 //TODO service interfaces can be used
 @Service
 public class ValidationService {
-	private final UsernameValidator usernameValidator;
+	private final UserValidator userValidator;
 	private final AddressValidator addressValidator;
-	private final UserAgeValidator userAgeValidator;
 
-	public ValidationService(UsernameValidator usernameValidator, AddressValidator addressValidator, UserAgeValidator userAgeValidator) {
-		this.usernameValidator = usernameValidator;
+	public ValidationService(UserValidator usernameValidator, AddressValidator addressValidator) {
+		this.userValidator = usernameValidator;
 		this.addressValidator = addressValidator;
-		this.userAgeValidator = userAgeValidator;
 	}
 
 	public ValidationResponse validateUserForRegistration(UserDto userDto) {
-		if(!usernameValidator.isUsernameUniq(userDto.getUsername())) {
+		if(!userValidator.isUsernameUniq(userDto.getUsername())) {
 			return ValidationResponse.error("userName not uniq");
 		}
 
@@ -30,10 +28,18 @@ public class ValidationService {
 	}
 
 	public ValidationResponse validateUserForOverview(String username) {
-		if(!userAgeValidator.isAgeValid(username)) {
+		if(!userValidator.isAgeValid(username)) {
 			return ValidationResponse.error("user is not eligable to see overview");
 		}
 
 		return ValidationResponse.success("here is the overview");
+	}
+
+	public ValidationResponse validateUserForAuth(String username, String password) {
+		if(!userValidator.isCredentialsValid(username,password)) {
+			return ValidationResponse.error("user credentials are not valid");
+		}
+
+		return ValidationResponse.success("user credentials are valid");
 	}
 }
