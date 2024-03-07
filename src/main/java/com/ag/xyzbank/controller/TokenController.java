@@ -1,9 +1,9 @@
 package com.ag.xyzbank.controller;
 
 import com.ag.xyzbank.controller.dto.AuthCredentialsDto;
-import com.ag.xyzbank.model.ValidationResponse;
 import com.ag.xyzbank.service.TokenService;
-import com.ag.xyzbank.service.validation.ValidationService;
+import com.ag.xyzbank.service.validation.InvalidUserDataException;
+import com.ag.xyzbank.service.validation.TokenNotValidException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,35 +14,32 @@ import org.springframework.web.client.HttpServerErrorException;
 
 @RestController
 public class TokenController {
-	private final ValidationService validationService;
 	private final TokenService tokenService;
 
-	public TokenController(TokenService tokenService, ValidationService validationService) {
+	public TokenController(TokenService tokenService) {
 		this.tokenService = tokenService;
-		this.validationService = validationService;
 	}
 
 	@PostMapping("token")
 	public String getToken(@RequestBody AuthCredentialsDto authCredentialsDto) {
-
-		ValidationResponse validation = validationService.validateUserForAuth(
-				authCredentialsDto.getUsername(),
-				authCredentialsDto.getPassword());
-		if(validation.isValid()) {
-			return tokenService.createToken(authCredentialsDto.getUsername());
-		} else {
-			//TODO put more details
-			throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, validation.getMessage());
+		try {
+			return tokenService.createToken(authCredentialsDto.getUsername(), authCredentialsDto.getPassword());
+		} catch(InvalidUserDataException userExistenceException) {
+			throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, userExistenceException.getMessage());
+		} catch(Exception exception) {
+			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
 		}
 	}
 
 	@GetMapping("logon")
-	public String validateToken(@RequestParam String token) {
-		var b = tokenService.activateToken(token);
-		if(b) {
+	public String logon(@RequestParam String token) {
+		try {
+			tokenService.activateToken(token);
 			return "Successfully login";
-		} else {
-			return "invalid token";
+		} catch(TokenNotValidException ex) {
+			throw new HttpServerErrorException(HttpStatus.FORBIDDEN, ex.getMessage());
+		} catch(Exception exception) {
+			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
 		}
 	}
 }
