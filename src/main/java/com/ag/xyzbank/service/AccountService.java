@@ -18,7 +18,11 @@ public class AccountService {
 		this.accountRepository = accountRepository;
 	}
 
-	public Account calculate(String token) {
+	public void save(Account account) {
+		accountRepository.save(account);
+	}
+
+	public Account getBytoken(String token) {
 		var username = tokenService.checkTokenStatus(token);
 
 		var user = userService.getUserByUsername(username);

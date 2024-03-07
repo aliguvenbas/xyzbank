@@ -1,7 +1,6 @@
 package com.ag.xyzbank.service;
 
 import com.ag.xyzbank.controller.dto.UserDto;
-import com.ag.xyzbank.repository.AccountRepository;
 import com.ag.xyzbank.repository.UserRepository;
 import com.ag.xyzbank.repository.data.Account;
 import com.ag.xyzbank.repository.data.AccountType;
@@ -23,12 +22,12 @@ public class UserService {
 
 	private final AddressValidator addressValidator;
 	private final UserRepository userRepository;
-	private final AccountRepository accountRepository;
+	private final AccountService accountService;
 
-	public UserService(AddressValidator addressValidator, UserRepository userRepository, AccountRepository accountRepository) {
+	public UserService(AddressValidator addressValidator, UserRepository userRepository, AccountService accountService) {
 		this.addressValidator = addressValidator;
 		this.userRepository = userRepository;
-		this.accountRepository = accountRepository;
+		this.accountService = accountService;
 	}
 
 	public User getUserByUsername(String username) {
@@ -37,34 +36,42 @@ public class UserService {
 
 	// TODO transactional
 	public User registerUser(UserDto userDto) {
-		User user = userRepository.findByUsername(userDto.getUsername());
+		if(userDto != null) {
+			User user = userRepository.findByUsername(userDto.getUsername());
 
-		if(user != null) {
-			throw UserExistanceException.userExist(userDto.getUsername());
+			if(user != null) {
+				throw UserExistanceException.userExist(userDto.getUsername());
+			}
+
+			if(!addressValidator.isUserInValidCountry(userDto.getAddress())) {
+				throw new InvalidUserDataException("User is not in valid area");
+			}
+
+			var newUser = new User(userDto.getName(),
+					userDto.getAddress(),
+					userDto.getDateOfBirth(),
+					userDto.getIdDocument(),
+					userDto.getUsername(),
+					PasswordUtil.generateRandomPassword(PASSWORD_LENGTH));
+
+			try {
+				userRepository.save(newUser);
+			} catch(Exception ex) {
+				throw ex;
+			}
+
+			createAccount(userDto.getUsername());
+
+			return newUser;
+		} else {
+			throw new InvalidUserDataException("Invalid user data");
 		}
-
-		if(!addressValidator.isUserInValidCountry(user.getAddress())) {
-			throw new InvalidUserDataException("user is not in valid area");
-		}
-
-		var newUser = new User(userDto.getUsername(),
-				userDto.getAddress(),
-				userDto.getDateOfBirth(),
-				userDto.getID_document(),
-				userDto.getUsername(),
-				PasswordUtil.generateRandomPassword(PASSWORD_LENGTH));
-
-		userRepository.save(newUser);
-
-		assignIBANTo(userDto.getUsername());
-
-		return newUser;
 	}
 
-	private void assignIBANTo(String username) {
+	private void createAccount(String username) {
 		String iban = IbanUtil.generateNetherlandsIBAN();
 
-		accountRepository.save(new Account(username, iban, 0, AccountType.TYPE1, Currency.EUR));
+		accountService.save(new Account(username, iban, 0, AccountType.TYPE1, Currency.EUR));
 	}
 
 	public boolean isAgeValid(String username) {

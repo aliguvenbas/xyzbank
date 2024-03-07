@@ -23,7 +23,7 @@ public class AccountOverviewController {
 	@GetMapping("overview")
 	public AccountOverviewDto getOverview(@RequestParam String token) {
 		try {
-			Account account = accountService.calculate(token);
+			Account account = accountService.getBytoken(token);
 			return new AccountOverviewDto(account.getIban(), account.getAccountType(), account.getBalance(), account.getCurrency());
 		} catch(UserExistanceException | UserNotEligibleException userExistenceException) {
 			throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, userExistenceException.getMessage());

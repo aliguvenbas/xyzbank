@@ -10,5 +10,4 @@ public class AccountOverviewDto {
 	private AccountType accountType;
 	private float balance;
 	private Currency currency;
-
 }

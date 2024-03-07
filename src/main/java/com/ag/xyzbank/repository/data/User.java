@@ -16,7 +16,7 @@ public class User {
 	private String address;
 	private String dateOfBirth;//dd-mm-yyyy
 	//TODO document
-	private String ID_document;
+	private String idDocument;
 	private String username;
 	private String password;
 
@@ -24,11 +24,10 @@ public class User {
 	}
 
 	public User(String name, String address, String dateOfBirth, String ID_document, String username, String password) {
-
 		this.name = name;
 		this.address = address;
 		this.dateOfBirth = dateOfBirth;
-		this.ID_document = ID_document;
+		this.idDocument = ID_document;
 		this.username = username;
 		this.password = password;
 	}
