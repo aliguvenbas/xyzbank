@@ -38,13 +38,15 @@ public class IbanUtil {
 	}
 
 	public static String generateNetherlandsIBAN() {
+//		String bankAccountNumber = generateRandomBankAccountNumber();
+//		System.out.println("Generated bankAccountNumber: " + bankAccountNumber);
+//
 //		Iban iban = new Iban.Builder()
 //				.countryCode(CountryCode.NL)
-//				.bankCode("19043")
-//				.accountNumber(generateRandomBankAccountNumber())
+//				.bankCode("XYZBN")
+//				.accountNumber(bankAccountNumber)
 //				.build();
 //
-//		// Validate the generated IBA
 //		System.out.println("Generated IBAN: " + iban.toString());
 
 		return UUID.randomUUID().toString();

@@ -2,6 +2,7 @@ package com.ag.xyzbank.controller;
 
 import com.ag.xyzbank.controller.dto.AuthCredentialsDto;
 import com.ag.xyzbank.controller.dto.UserDto;
+import com.ag.xyzbank.service.AccountService;
 import com.ag.xyzbank.service.UserService;
 import com.ag.xyzbank.service.validation.InvalidUserDataException;
 import com.ag.xyzbank.service.validation.UserExistanceException;
@@ -16,15 +17,19 @@ import org.springframework.web.client.HttpStatusCodeException;
 public class RegistrationController {
 
 	private final UserService userRegistrationService;
+	private final AccountService accountService;
 
-	public RegistrationController(UserService userRegistrationService) {
+	public RegistrationController(UserService userRegistrationService, AccountService accountService) {
 		this.userRegistrationService = userRegistrationService;
+		this.accountService = accountService;
 	}
 
 	@PostMapping("register")
 	public AuthCredentialsDto registerUser(@RequestBody UserDto userDto) throws HttpStatusCodeException {
 		try {
 			var registrationResponse = userRegistrationService.registerUser(userDto);
+
+			accountService.createAccountFor(registrationResponse.getUsername());
 
 			return new AuthCredentialsDto(registrationResponse.getUsername(), registrationResponse.getPassword());
 		} catch(UserExistanceException | InvalidUserDataException userExistanceException) {

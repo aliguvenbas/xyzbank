@@ -14,23 +14,18 @@ import static org.mockito.Mockito.when;
 
 import com.ag.xyzbank.controller.dto.UserDto;
 import com.ag.xyzbank.repository.UserRepository;
-import com.ag.xyzbank.repository.data.Account;
-import com.ag.xyzbank.repository.data.AccountType;
-import com.ag.xyzbank.repository.data.Currency;
 import com.ag.xyzbank.repository.data.User;
 import com.ag.xyzbank.service.validation.AddressValidator;
 import com.ag.xyzbank.service.validation.InvalidUserDataException;
 import com.ag.xyzbank.service.validation.UserExistanceException;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.springframework.dao.OptimisticLockingFailureException;
 
 class UserServiceTest {
 
 	private final UserRepository userRepository = mock(UserRepository.class);
 	private final AddressValidator addressValidator = mock(AddressValidator.class);
-	private final AccountService accountService = mock(AccountService.class);
-	private final UserService userService = new UserService(addressValidator, userRepository, accountService);
+	private final UserService userService = new UserService(addressValidator, userRepository);
 
 	@Test
 	public void shouldCallUserRepositoryForQueryingByUsername() {
@@ -86,42 +81,16 @@ class UserServiceTest {
 
 		User user = userService.registerUser(userDto);
 
-		assertNotNull(user.getPassword());
-		assertEquals("test-name", user.getName());
-		assertEquals("test-addr", user.getAddress());
-		assertEquals("12-12-2012", user.getDateOfBirth());
-		assertEquals("id-document-details", user.getIdDocument());
-		assertEquals("any-username", user.getUsername());
-
 		ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
 		verify(userRepository).save(userArgumentCaptor.capture());
 
-		assertEquals(user, userArgumentCaptor.getValue());
+		User userArgumentCaptorValue = userArgumentCaptor.getValue();
 
-		ArgumentCaptor<Account> accountArgumentCaptor = ArgumentCaptor.forClass(Account.class);
-		verify(accountService).save(accountArgumentCaptor.capture());
-
-		Account accountArgumentCaptorValue = accountArgumentCaptor.getValue();
-		assertNotNull(accountArgumentCaptorValue.getIban());
-		assertEquals("any-username", accountArgumentCaptorValue.getUsername());
-		assertEquals(0, accountArgumentCaptorValue.getBalance());
-		assertEquals(AccountType.TYPE1, accountArgumentCaptorValue.getAccountType());
-		assertEquals(Currency.EUR, accountArgumentCaptorValue.getCurrency());
+		assertNotNull(userArgumentCaptorValue.getPassword());
+		assertEquals("test-name", userArgumentCaptorValue.getName());
+		assertEquals("test-addr", userArgumentCaptorValue.getAddress());
+		assertEquals("12-12-2012", userArgumentCaptorValue.getDateOfBirth());
+		assertEquals("id-document-details", userArgumentCaptorValue.getIdDocument());
+		assertEquals("any-username", userArgumentCaptorValue.getUsername());
 	}
-
-	@Test
-	public void shouldNotCreateAccountIfSthHappensWrongDuringUserCreation(){
-		when(userRepository.findByUsername(any())).thenReturn(null);
-
-		when(addressValidator.isUserInValidCountry(any())).thenReturn(true);
-
-		when(userRepository.save(any())).thenThrow(OptimisticLockingFailureException.class);
-
-		UserDto userDto = new UserDto("test-name", "test-addr", "12-12-2012", "id-document-details", "any-username");
-
-		assertThrows(Exception.class, () -> userService.registerUser(userDto));
-
-		verifyNoInteractions(accountService);
-	}
-
 }

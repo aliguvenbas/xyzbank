@@ -2,14 +2,10 @@ package com.ag.xyzbank.service;
 
 import com.ag.xyzbank.controller.dto.UserDto;
 import com.ag.xyzbank.repository.UserRepository;
-import com.ag.xyzbank.repository.data.Account;
-import com.ag.xyzbank.repository.data.AccountType;
-import com.ag.xyzbank.repository.data.Currency;
 import com.ag.xyzbank.repository.data.User;
 import com.ag.xyzbank.service.validation.AddressValidator;
 import com.ag.xyzbank.service.validation.InvalidUserDataException;
 import com.ag.xyzbank.service.validation.UserExistanceException;
-import com.ag.xyzbank.util.IbanUtil;
 import com.ag.xyzbank.util.PasswordUtil;
 import java.time.LocalDate;
 import java.time.Period;
@@ -22,12 +18,10 @@ public class UserService {
 
 	private final AddressValidator addressValidator;
 	private final UserRepository userRepository;
-	private final AccountService accountService;
 
-	public UserService(AddressValidator addressValidator, UserRepository userRepository, AccountService accountService) {
+	public UserService(AddressValidator addressValidator, UserRepository userRepository) {
 		this.addressValidator = addressValidator;
 		this.userRepository = userRepository;
-		this.accountService = accountService;
 	}
 
 	public User getUserByUsername(String username) {
@@ -55,23 +49,13 @@ public class UserService {
 					PasswordUtil.generateRandomPassword(PASSWORD_LENGTH));
 
 			try {
-				userRepository.save(newUser);
+				return userRepository.save(newUser);
 			} catch(Exception ex) {
 				throw ex;
 			}
-
-			createAccount(userDto.getUsername());
-
-			return newUser;
 		} else {
 			throw new InvalidUserDataException("Invalid user data");
 		}
-	}
-
-	private void createAccount(String username) {
-		String iban = IbanUtil.generateNetherlandsIBAN();
-
-		accountService.save(new Account(username, iban, 0, AccountType.TYPE1, Currency.EUR));
 	}
 
 	public boolean isAgeValid(String username) {

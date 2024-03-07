@@ -2,12 +2,16 @@ package com.ag.xyzbank.service;
 
 import com.ag.xyzbank.repository.AccountRepository;
 import com.ag.xyzbank.repository.data.Account;
+import com.ag.xyzbank.repository.data.AccountType;
+import com.ag.xyzbank.repository.data.Currency;
 import com.ag.xyzbank.service.validation.UserExistanceException;
 import com.ag.xyzbank.service.validation.UserNotEligibleException;
+import com.ag.xyzbank.util.IbanUtil;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AccountService {
+	private static final int MAX_IBAN_CREATION_RETRY_COUNT = 10;
 	private final UserService userService;
 	private final TokenService tokenService;
 	private final AccountRepository accountRepository;
@@ -18,11 +22,23 @@ public class AccountService {
 		this.accountRepository = accountRepository;
 	}
 
-	public void save(Account account) {
-		accountRepository.save(account);
+	public void createAccountFor(String username) {
+		String iban = IbanUtil.generateNetherlandsIBAN();
+
+		Account existedIban;
+		int ibanCreationRetryAccount = 0;
+		do {
+			existedIban = accountRepository.findByIban(iban);
+			ibanCreationRetryAccount++;
+			if(ibanCreationRetryAccount == MAX_IBAN_CREATION_RETRY_COUNT) {
+				throw new RuntimeException("Iban can not be created");
+			}
+		} while(existedIban != null && ibanCreationRetryAccount < MAX_IBAN_CREATION_RETRY_COUNT);
+
+		accountRepository.save(new Account(username, iban, 0, AccountType.TYPE1, Currency.EUR));
 	}
 
-	public Account getBytoken(String token) {
+	public Account getByToken(String token) {
 		var username = tokenService.checkTokenStatus(token);
 
 		var user = userService.getUserByUsername(username);
