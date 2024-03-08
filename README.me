@@ -9,8 +9,8 @@ Application
    2 By using username and password the token can be created. /token endpoint will return an active=0 token
    3 By using this token user can be logon. Under the hood the token will be activated active=1. you should see 'Successfully login'
 message
-   4 If token is not valid you will see 'Invalid token' message
-   5 Now token is activated, use can see the account overview
+   4 Now token is activated, user can see the account overview /overview
+   5 If token is not valid you will see 'Invalid token' message
    6 For the age check, an user can be saved under age 18 and apply the steps from 1 to 5. On step 5 you will see the error
 - The passwords and tokens are random generated. Thus, they must be copied each time
 
@@ -32,7 +32,7 @@ Database check
     > select * from User;
 
 Drawbacks
-- I should use document format for ID document but I used a String
+- I should use proper format for ID document but I used a String
 - I could not generate a NL iban, I used a uuid
 - Token stays active. There should be a process that makes the token passive
 - Firstly, I add a query limiter to my application. QueryRateLimiter. It is an aspect.
@@ -45,5 +45,6 @@ Drawbacks
      According to the application load these queries can be fetched by application and execute.
      Google Cloud Pub/Sub, RabbitMQ or Apache Kafka could be some options for it
 - Multiple tokens can be created for a user. I am not sure what is the best practice of it
+- The entities between layers could be more accurate. Like Dto, service entities and data entities.
 
 

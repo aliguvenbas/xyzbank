@@ -28,7 +28,6 @@ public class UserService {
 		return userRepository.findByUsername(username);
 	}
 
-	// TODO transactional
 	public User registerUser(UserDto userDto) {
 		if(userDto != null) {
 			User user = userRepository.findByUsername(userDto.getUsername());

@@ -25,6 +25,10 @@ public class AccountService {
 	public void createAccountFor(String username) {
 		String iban = IbanUtil.generateNetherlandsIBAN();
 
+		// Since we have uuid as an iban, it will be created at the first time
+		// and it will be uniq
+		// But if I have a decent iban for NL, in order to prevent duplicate ibans
+		// I added this logic. Maybe too over-engineering
 		Account existedIban;
 		int ibanCreationRetryAccount = 0;
 		do {
