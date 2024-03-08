@@ -3,6 +3,7 @@ Application
     > docker-compose up
 - One container will run for the application(xyzbank-api), one container will run for MySql db(mysqldb)
 - Swagger ui can be reached put by using this url -> http://localhost:8080/swagger-ui/index.html
+- Code coverage is 60% classes and 63% lines in 'all classes in scope'
 - Application flow
    1 User is registered with the specified fields. And /register returns username and random password
    2 By using username and password the token can be created. /token endpoint will return an active=0 token
@@ -11,6 +12,7 @@ message
    4 If token is not valid you will see 'Invalid token' message
    5 Now token is activated, use can see the account overview
    6 For the age check, an user can be saved under age 18 and apply the steps from 1 to 5. On step 5 you will see the error
+- The passwords and tokens are random generated. Thus, they must be copied each time
 
 Token generation
 - I use a uuid as a token but a JWT token would be more convenient
@@ -42,4 +44,6 @@ Drawbacks
      What can I do, I can add a queue process to the application and save all these queries
      According to the application load these queries can be fetched by application and execute.
      Google Cloud Pub/Sub, RabbitMQ or Apache Kafka could be some options for it
+- Multiple tokens can be created for a user. I am not sure what is the best practice of it
+
 

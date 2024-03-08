@@ -1,5 +1,5 @@
 # Stage 1: Build the application
-FROM gradle:latest AS build
+FROM gradle:jdk17 AS build
 WORKDIR /app
 COPY . .
 RUN gradle build --no-daemon
