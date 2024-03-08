@@ -38,6 +38,7 @@ Drawbacks
      But in my logic, for user registration I need at least four queries.
      I can remove the validation checks but I didn't want to tbh. Currently it is more safe
      So, this limit is not convenient for my application and I disabled it
+     (get-overview more than 2 times in a second request in postman request collection will not work as wanted)
      What can I do, I can add a queue process to the application and save all these queries
      According to the application load these queries can be fetched by application and execute.
      Google Cloud Pub/Sub, RabbitMQ or Apache Kafka could be some options for it

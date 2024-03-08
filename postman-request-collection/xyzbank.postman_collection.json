@@ -1,0 +1,208 @@
+{
+	"info": {
+		"_postman_id": "6e254395-9c4b-44cc-9dd0-db0d762d6051",
+		"name": "xyzbank",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8612574"
+	},
+	"item": [
+		{
+			"name": "register-user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\":\"john doe\",\n\t\"address\": \"Netherlands\",\n\t\"dateOfBirth\": \"31-12-1990\",\n\t\"ID_document\": \"id card\",\n\t\"username\": \"johndoe\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register-user with invalid country",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\":\"john doe jr\",\n\t\"address\": \"England\",\n\t\"dateOfBirth\": \"31-12-1991\",\n\t\"ID_document\": \"residence permit\",\n\t\"username\": \"johndoejr\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register-user with same username",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\":\"john doe jr\",\n\t\"address\": \"Netherlands\",\n\t\"dateOfBirth\": \"31-12-1991\",\n\t\"ID_document\": \"residence permit\",\n\t\"username\": \"johndoe\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create-token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\":\"johndoe\",\n\t\"password\":\"aipkf%k7tK\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logon",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/logon?token=9019e536-26e0-449e-b0ca-823f232ac433",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"logon"
+					],
+					"query": [
+						{
+							"key": "token",
+							"value": "9019e536-26e0-449e-b0ca-823f232ac433"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-overview",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/overview?token=9019e536-26e0-449e-b0ca-823f232ac433",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"overview"
+					],
+					"query": [
+						{
+							"key": "token",
+							"value": "9019e536-26e0-449e-b0ca-823f232ac433"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-overview more than 2 times in a second",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.variables.set(\"retryCount\",4)// will call the method four times in a second"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/overview?token=1cabf35c-9cd0-462a-b68c-a564dc09b8a2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"overview"
+					],
+					"query": [
+						{
+							"key": "token",
+							"value": "1cabf35c-9cd0-462a-b68c-a564dc09b8a2"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
