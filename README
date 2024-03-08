@@ -3,6 +3,15 @@ Application
     > docker-compose up
 - One container will run for the application(xyzbank-api), one container will run for MySql db(mysqldb)
 - Swagger ui can be reached put by using this url -> http://localhost:8080/swagger-ui/index.html
+- Application flow
+   1 User is registered with the specified fields. And /register returns username and random password
+   2 By using username and password the token can be created. /token endpoint will return an active=0 token
+   3 By using this token user can be logon. Under the hood the token will be activated active=1. you should see 'Successfully login'
+message
+   4 If token is not valid you will see 'Invalid token' message
+   5 Now token is activated, use can see the account overview
+   6 For the age check, an user can be saved under age 18 and apply the steps from 1 to 5. On step 5 you will see the error
+
 
 Token generation
 - I use a uuid as a token but a JWT token would be more convenient
@@ -11,5 +20,27 @@ Unit tests
 - Test entity builders can be added to unit tests
 - More unit tests can be added
 
+Database check
+- I have three different table User, Account, Token
+- They can be linked to each other by using username field
+- You can enter to the mysql container and query the tables by following commands
+    >  docker exec -it mysqldb mysql -u root -p
+    (password -> root-ag-pass)
+
+    > use xyzbank;
+    > select * from User;
+
+
 Drawbacks
 - I should use document format for ID document but I used a String
+- I could not generate a NL iban, I used a uuid
+- Token stays active. There should be a process that makes the token passive
+- Firstly, I add a query limiter to my application. QueryRateLimiter. It is an aspect.
+     It prevents db transaction if there are more than two in one second
+     But in my logic, for user registration I need at least four queries.
+     I can remove the validation checks but I didn't want to tbh. Currently it is more safe
+     So, this limit is not convenient for my application and I disabled it
+     What can I do, I can add a queue process to the application and save all these queries
+     According to the application load these queries can be fetched by application and execute.
+     Google Cloud Pub/Sub, RabbitMQ or Apache Kafka could be some options for it
+
