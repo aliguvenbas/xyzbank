@@ -26,8 +26,6 @@ public class TokenController {
 			return tokenService.createToken(authCredentialsDto.getUsername(), authCredentialsDto.getPassword());
 		} catch(InvalidUserDataException userExistenceException) {
 			throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, userExistenceException.getMessage());
-		} catch(Exception exception) {
-			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
 		}
 	}
 
@@ -38,8 +36,6 @@ public class TokenController {
 			return "Successfully login";
 		} catch(TokenNotValidException ex) {
 			throw new HttpServerErrorException(HttpStatus.FORBIDDEN, ex.getMessage());
-		} catch(Exception exception) {
-			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
 		}
 	}
 }

@@ -34,8 +34,6 @@ public class RegistrationController {
 			return new AuthCredentialsDto(registrationResponse.getUsername(), registrationResponse.getPassword());
 		} catch(UserExistanceException | InvalidUserDataException userExistanceException) {
 			throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, userExistanceException.getMessage());
-		} catch(Exception exception) {
-			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
 		}
 	}
 }

@@ -29,8 +29,6 @@ public class AccountOverviewController {
 			throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, userExistenceException.getMessage());
 		} catch(TokenNotValidException ex) {
 			throw new HttpServerErrorException(HttpStatus.FORBIDDEN, ex.getMessage());
-		} catch(Exception exception) {
-			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
 		}
 	}
 }

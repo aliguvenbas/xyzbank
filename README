@@ -1,0 +1,15 @@
+Application
+- Application can be up and running by using the command
+    > docker-compose up
+- One container will run for the application(xyzbank-api), one container will run for MySql db(mysqldb)
+- Swagger ui can be reached put by using this url -> http://localhost:8080/swagger-ui/index.html
+
+Token generation
+- I use a uuid as a token but a JWT token would be more convenient
+
+Unit tests
+- Test entity builders can be added to unit tests
+- More unit tests can be added
+
+Drawbacks
+- I should use document format for ID document but I used a String
